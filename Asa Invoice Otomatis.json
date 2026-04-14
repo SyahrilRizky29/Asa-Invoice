@@ -1,0 +1,203 @@
+{
+  "name": "Asa Invoice Otomatis",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Pembuatan Invoice Otomatis",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Nama Klien",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Jam Kerja",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Rate",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email Klien",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a0c5dd18-3419-4a94-9f46-15344857d35c",
+      "name": "On form submission",
+      "webhookId": "5d5ee623-667a-4520-b5db-a4de09573e86"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fd947ae5-84a8-4f73-a353-8cdffd6ae286",
+              "name": "Total Biaya",
+              "value": "={{ (Number($json[\"Jam Kerja\"]) * Number($json[\"Rate\"].toString().replace(/\\./g, \"\"))).toLocaleString(\"id-ID\") }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "b820a803-8a63-4648-9be1-35f14c8901b0",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html lang=\"id\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>Invoice - Asa Company</title>\n  <style>\n    :root {\n      --primary-color: #1f2937; /* Warna gelap profesional */\n      --accent-color: #2563eb;\n      --text-main: #1f2937;\n      --text-muted: #6b7280;\n      --bg-light: #f8fafc;\n      --border-color: #e5e7eb;\n    }\n\n    body {\n      font-family: 'Inter', -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif;\n      background: var(--bg-light);\n      padding: 50px 20px;\n      color: var(--text-main);\n      line-height: 1.5;\n    }\n\n    .invoice-wrapper {\n      max-width: 850px;\n      margin: auto;\n      background: #ffffff;\n      border-radius: 8px;\n      padding: 50px;\n      box-shadow: 0 4px 15px rgba(0,0,0,0.05);\n      position: relative;\n    }\n\n    .invoice-header {\n      display: flex;\n      justify-content: space-between;\n      align-items: flex-start;\n      margin-bottom: 40px;\n      border-bottom: 2px solid var(--primary-color);\n      padding-bottom: 20px;\n    }\n\n    .brand h1 {\n      margin: 0;\n      font-size: 28px;\n      font-weight: 800;\n      color: var(--primary-color);\n      text-transform: uppercase;\n    }\n    \n    .brand p {\n      margin: 5px 0 0;\n      color: var(--text-muted);\n      font-size: 13px;\n      letter-spacing: 1px;\n    }\n\n    .invoice-meta {\n      text-align: right;\n    }\n\n    .invoice-meta h2 {\n      margin: 0;\n      font-size: 24px;\n      color: var(--primary-color);\n    }\n\n    .invoice-meta p {\n      margin: 5px 0;\n      font-size: 14px;\n    }\n\n    .info-grid {\n      display: grid;\n      grid-template-columns: 1fr 1fr;\n      gap: 40px;\n      margin-bottom: 40px;\n      padding: 20px 0;\n    }\n\n    .section-title {\n      font-size: 11px;\n      font-weight: 700;\n      color: var(--text-muted);\n      text-transform: uppercase;\n      margin-bottom: 10px;\n      border-bottom: 1px solid var(--border-color);\n      padding-bottom: 5px;\n    }\n\n    .client-info p, .provider-info p {\n      margin: 3px 0;\n      font-size: 14px;\n    }\n\n    table {\n      width: 100%;\n      border-collapse: collapse;\n      margin-top: 10px;\n    }\n\n    table thead th {\n      background: #ffffff;\n      padding: 12px 10px;\n      text-align: left;\n      font-size: 12px;\n      font-weight: 700;\n      color: var(--text-muted);\n      text-transform: uppercase;\n      border-bottom: 2px solid var(--primary-color);\n    }\n\n    table tbody td {\n      padding: 15px 10px;\n      border-bottom: 1px solid var(--border-color);\n      font-size: 14px;\n    }\n\n    .text-right { text-align: right; }\n\n    .summary-wrapper {\n      display: flex;\n      justify-content: flex-end;\n      margin-top: 30px;\n    }\n\n    .summary-table {\n      width: 300px;\n    }\n\n    .summary-table td {\n      padding: 8px 10px;\n      font-size: 14px;\n    }\n\n    /* Bagian Total yang diperbaiki agar tidak seperti button */\n    .total-row {\n      font-weight: 700;\n      color: var(--primary-color);\n    }\n\n    .total-row td {\n      padding-top: 15px;\n      font-size: 18px;\n      border-top: 2px solid var(--primary-color); /* Garis tegas pengganti background biru */\n    }\n\n    .footer {\n      margin-top: 60px;\n      padding-top: 20px;\n      border-top: 1px dotted var(--border-color);\n      text-align: center;\n      font-size: 12px;\n      color: var(--text-muted);\n    }\n  </style>\n</head>\n\n<body>\n  <div class=\"invoice-wrapper\">\n\n    <div class=\"invoice-header\">\n      <div class=\"brand\">\n        <h1>ASA CO.</h1>\n        <p>Digital Solutions & Automation</p>\n      </div>\n      <div class=\"invoice-meta\">\n        <h2>INVOICE</h2>\n        <p>No: <strong>INV-{{ $execution.id }}</strong></p>\n        <p>Tanggal: {{ $now.format('dd/MM/yyyy') }}</p>\n      </div>\n    </div>\n\n    <div class=\"info-grid\">\n      <div class=\"provider-info\">\n        <div class=\"section-title\">Penyedia Jasa</div>\n        <p><strong>Asa Company</strong></p>\n        <p>Admin: Suaminya Asa</p>\n        <p>support@asaco.id</p>\n      </div>\n      <div class=\"client-info\">\n        <div class=\"section-title\">Ditagihkan Kepada</div>\n        <p><strong>{{ $node[\"On form submission\"].json[\"Nama Klien\"] }}</strong></p>\n        <p>{{ $node[\"On form submission\"].json[\"Email Klien\"] }}</p>\n      </div>\n    </div>\n\n    <div class=\"section\">\n      <div class=\"section-title\">Rincian Pekerjaan</div>\n      <table>\n        <thead>\n          <tr>\n            <th width=\"55%\">Deskripsi</th>\n            <th class=\"text-right\">Durasi</th>\n            <th class=\"text-right\">Rate</th>\n            <th class=\"text-right\">Subtotal</th>\n          </tr>\n        </thead>\n        <tbody>\n          <tr>\n            <td>\n              <strong>Jasa Pengembangan Sistem Automation</strong><br>\n              <span style=\"color: #6b7280; font-size: 12px;\">Implementasi workflow n8n dan integrasi API</span>\n            </td>\n            <td class=\"text-right\">{{ $node[\"On form submission\"].json[\"Jam Kerja\"] }} Jam</td>\n            <td class=\"text-right\">Rp {{ $node[\"On form submission\"].json[\"Rate\"] }}</td>\n            <td class=\"text-right\">Rp {{ $node[\"Edit Fields\"].json[\"Total Biaya\"] }}</td>\n          </tr>\n        </tbody>\n      </table>\n    </div>\n\n    <div class=\"summary-wrapper\">\n      <table class=\"summary-table\">\n        <tr>\n          <td class=\"text-muted\">Subtotal</td>\n          <td class=\"text-right\">Rp {{ $node[\"Edit Fields\"].json[\"Total Biaya\"] }}</td>\n        </tr>\n        <tr>\n          <td class=\"text-muted\">Pajak (0%)</td>\n          <td class=\"text-right\">Rp 0</td>\n        </tr>\n        <tr class=\"total-row\">\n          <td>Total Tagihan</td>\n          <td class=\"text-right\">Rp {{ $node[\"Edit Fields\"].json[\"Total Biaya\"] }}</td>\n        </tr>\n      </table>\n    </div>\n\n    <div class=\"footer\">\n      <p>Invoice ini sah dan dibuat secara otomatis melalui sistem Asa Company.<br>\n      Silakan lakukan pembayaran sesuai dengan instruksi yang telah disepakati.</p>\n    </div>\n\n  </div>\n</body>\n</html>"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "abc20b03-8439-4dae-99fa-aa439bd3b3e2",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "html_content": "={{ $json.html }}"
+      },
+      "type": "n8n-nodes-htmlcsstopdf.htmlcsstopdf",
+      "typeVersion": 1,
+      "position": [
+        624,
+        0
+      ],
+      "id": "d1013618-5291-4063-aee1-dceb4fa6ffaf",
+      "name": "Convert HTML to PDF",
+      "credentials": {
+        "htmlcsstopdfApi": {
+          "id": "wARTP5PGzsQgPssD",
+          "name": "Asa Invoice"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.pdf_url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        832,
+        0
+      ],
+      "id": "3994bbd2-59a6-48f3-a22b-154c49197c42",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $node[\"On form submission\"].json[\"Email Klien\"] }}",
+        "subject": "=Invoice dari Asa Company untuk {{ $node[\"On form submission\"].json[\"Nama Klien\"] }}",
+        "message": "=<p>Yth. <strong>{{ $('On form submission').item.json['Nama Klien'] }}</strong>,</p>  <p>Terima kasih atas kepercayaan Anda telah menggunakan jasa kami. <br> Bersama email ini, kami lampirkan invoice untuk pekerjaan yang telah diselesaikan.</p>  <p>Berikut adalah ringkasan singkat tagihan Anda:</p> <ul>     <li><strong>Total Jam Kerja:</strong>  {{ $('On form submission').item.json['Jam Kerja'] }}jam</li>     <li><strong>Total Tagihan:</strong> {{ $('Edit Fields').item.json['Total Biaya'] }}</li>     <li><strong>Jatuh Tempo:</strong> 14 hari</li> </ul>  <p>Detail lengkap, termasuk rincian pekerjaan dan instruksi pembayaran, dapat Anda temukan pada file PDF yang terlampir:{{ $json.pdf_url }}</p>  <blockquote style=\"border-left: 4px solid #ccc; padding-left: 15px; margin-left: 0; font-style: italic;\">   <strong>Catatan Keamanan:</strong> Untuk melindungi Anda, kami tidak akan pernah meminta informasi password atau data sensitif melalui email. Harap lakukan pembayaran hanya ke nomor rekening resmi yang tertera di dalam invoice PDF. </blockquote>  <p>Jika ada pertanyaan lebih lanjut, jangan ragu untuk membalas email ini.</p>  <p>Hormat kami,</p>  <p><strong>[Asa / Asa Company]</strong><br> [Asa / 123456789]</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "d3e8cd0e-3d99-4006-979d-96e67ceb6b3b",
+      "name": "Send a message",
+      "webhookId": "51715ba8-c39d-4258-b242-b3da5a675b8a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Ihdx0HS9twKzsBHm",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Convert HTML to PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert HTML to PDF": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "13f61fdf-f17c-434c-bcc3-af4e1637846c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e7762260969ce1b1f607bc86cdcbb8007b0ded25e792ccdc3c7592b5a1230f59"
+  },
+  "id": "KREljSeP6p8U4Mzz",
+  "tags": []
+}
